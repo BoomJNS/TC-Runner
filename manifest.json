@@ -1,0 +1,10 @@
+{
+  "name": "TC Runner",
+  "short_name": "TC Runner",
+  "theme_color": "#666666",
+  "background_color": "#ffffff",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "scope": "/",
+  "start_url": "/"
+}

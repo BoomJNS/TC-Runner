@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Timecode App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff; /* White */
+      overflow: hidden;
+    }
+    #framerate-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333; /* Dark Gray */
+      padding: 10px;
+      box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1;
+    }
+    .framerate-button {
+      font-size: 1em;
+      color: #fff; /* White */
+      background-color: #333; /* Dark Gray */
+      padding: 8px 0;
+      border: none;
+      flex: 1;
+      cursor: pointer;
+      transition: background-color 0.3s, border-radius 0.3s;
+      border-radius: 5px;
+    }
+    .framerate-button.active {
+      background-color: #666; /* Medium Gray */
+      border-radius: 5px; /* Keep rounded corners when active */
+    }
+    #timecode-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      box-sizing: border-box;
+      padding: 40px;
+      padding-top: 60px;
+      padding-bottom: 60px;
+    }
+    #timecode {
+      font-size: 6em;
+      color: #666; /* Medium Gray */
+      line-height: 1.5; /* Ensures proper vertical alignment */
+    }
+
+    /* Portrait mode adjustments */
+    @media screen and (orientation: portrait) {
+      #timecode {
+        font-size: 4em;
+      }
+    }
+
+    /* Fullscreen mode */
+    :fullscreen {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="framerate-buttons">
+    <button class="framerate-button" onclick="setFramerate(24)">24 fps</button>
+    <button class="framerate-button active" onclick="setFramerate(25)">25 fps</button>
+    <button class="framerate-button" onclick="setFramerate(30)">30 fps</button>
+    <button class="framerate-button" onclick="setFramerate(50)">50 fps</button>
+    <button class="framerate-button" onclick="setFramerate(60)">60 fps</button>
+  </div>
+
+  <div id="timecode-container">
+    <div id="timecode">00:00:00:00</div>
+  </div>
+
+  <script>
+    let currentFramerate = 25;
+
+    function updateTC() {
+      const currentTime = new Date();
+      const hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes();
+      const seconds = currentTime.getSeconds();
+      const milliseconds = currentTime.getMilliseconds();
+      const frames = Math.floor((milliseconds / 1000) * currentFramerate);
+
+      const formattedTC = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}:${pad(frames)}`;
+      document.getElementById('timecode').innerText = formattedTC;
+    }
+
+    function pad(number) {
+      return number.toString().padStart(2, '0');
+    }
+
+    function setFramerate(framerate) {
+      currentFramerate = framerate;
+
+      // Update button styles
+      const buttons = document.querySelectorAll('.framerate-button');
+      buttons.forEach(button => {
+        button.classList.remove('active');
+        if (parseFloat(button.innerText) === framerate) {
+          button.classList.add('active');
+        }
+      });
+
+      // Update timecode immediately
+      updateTC();
+    }
+
+    // Update timecode 25 times per second
+    setInterval(updateTC, 40);
+
+    // Initial update
+    updateTC();
+  </script>
+</body>
+</html>
